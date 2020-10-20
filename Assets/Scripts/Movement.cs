@@ -4,36 +4,43 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
+    public float speed = 3;
+    public GameObject clone;
 
     private Rigidbody2D rb;
-    ParticleSystem gun;
-    Animator anim;
-    public float speed = 3;
+    private Animator anim;
+    private List<Vector2> inputHistory;
+    private Vector3 startPos;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        gun = GetComponentInChildren<ParticleSystem>();
-        anim = GetComponentInChildren<Animator>();
-
+        inputHistory = new List<Vector2>();
+        startPos = transform.position;
+        //anim = GetComponentInChildren<Animator>();
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            GameObject c = Instantiate(clone);
+            c.transform.position = startPos;
+            c.GetComponent<Clone>().SetInput(inputHistory);
+            startPos = transform.position;
+            inputHistory.Clear();
+        }
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         float x = Input.GetAxisRaw("Horizontal");
-        anim.SetFloat("x", x);
+        float y = Input.GetAxisRaw("Vertical");
+        Vector2 playerInput = new Vector2(x, y);
+        playerInput = Vector2.ClampMagnitude(playerInput, 1f);
 
-        transform.position += new Vector3(x * speed * Time.deltaTime, 0,0);
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-                gun.Play();
-        }
-        else if (Input.GetKeyUp(KeyCode.Space))
-        {
-            gun.Stop();
-        }
+        rb.velocity = playerInput * speed;
+        inputHistory.Add(playerInput);
     }
 }
