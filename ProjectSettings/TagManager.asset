@@ -15,8 +15,8 @@ TagManager:
   - 
   - Env
   - Ground
-  - 
-  - 
+  - Clone
+  - Player
   - 
   - 
   - 
@@ -46,4 +46,7 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Goal
+    uniqueID: 3376651463
     locked: 0
