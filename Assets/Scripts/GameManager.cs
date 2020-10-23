@@ -2,23 +2,47 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+using DG.Tweening;
 
 public class GameManager : MonoBehaviour
 {
     public float spawnRate;
     public GameObject goal;
     public TextMeshProUGUI countDown;
-    public GameObject player;
+    public GameObject currPlayer;
+    public GameObject playerPrefab;
+    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI lifeText;
+    public Button restart;
+    public Volume postprocessing;
+    private ColorAdjustments colorAdj;
 
     public static GameManager instance;
     public static float screenWidth, screenHeight;
 
     private float spawnCounter;
+    private int score = 0;
+    private GameObject currGoal;
+    private int playerLife = 3;
+    private bool gameEnded = true;
+    private ParticleSystem trail;
+
+    public List<Crash> ships;
+    private void Awake()
+    {
+        ships = new List<Crash>();
+        postprocessing.profile.TryGet(out colorAdj);
+    }
+
     private void Start()
     {
         if (instance != null)
             Destroy(gameObject);
         instance = this;
+        DontDestroyOnLoad(gameObject);
 
         var cam = Camera.main;
 
@@ -27,32 +51,89 @@ public class GameManager : MonoBehaviour
 
         screenWidth = (screenTopRight.x - screenBottomLeft.x) / 2;
         screenHeight = (screenTopRight.y - screenBottomLeft.y) / 2;
+        
+    }
+    public void InitGame()
+    {
+        gameEnded = false;
+        score = 0;
+        playerLife = 3;
+        scoreText.text = "Score: " + score;
+        lifeText.text = "life: " + playerLife;
+        currPlayer = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+        trail = currPlayer.GetComponentInChildren<ParticleSystem>();
 
-        spawnCounter = spawnRate;
+        SpawnGoal();
+    }
+    public void RestartGame() {
+        //clean up the scene
+        Destroy(currGoal);
+        Destroy(trail.gameObject);
+        
+        InitGame();
     }
     public void OnPlayerTouchGoal() {
-
+        score++;
+        scoreText.text = "Score: " + score;
+        SpawnGoal();
     }
     public void OnPlayerMissedGoal() {
-        spawnCounter = spawnRate;
+        playerLife--;
+        DOTween.Sequence()
+            .Append(DOTween.To(() => colorAdj.colorFilter.value, x => colorAdj.colorFilter.value = x, Color.red, 0.4f))
+            .Append(DOTween.To(() => colorAdj.colorFilter.value, x => colorAdj.colorFilter.value = x, Color.white, 0.8f));
+        lifeText.text = "life: " + playerLife;
+        if (playerLife <= 0)
+        {
+            OnPlayerNoHealth();
+        }
+
+        Destroy(currGoal);
+        SpawnGoal();
+    }
+    public void OnPlayerNoHealth() {
+        currPlayer.GetComponent<Crash>().OnCrash();
+    }
+    public void OnGameEnd() {
+        countDown.text = "Wasted";
+        spawnCounter = 1000;
+        gameEnded = true;
+        StartCoroutine(DoEndEffect());
+    }
+    private IEnumerator DoEndEffect() {
+        //do the death effects
+        while (ships.Count > 0)
+        {
+            if (ships[0] != null)
+                ships[0].OnCrash();
+            yield return new WaitForSeconds(Random.Range(0.3f, 0.5f));
+        }
+        yield return new WaitForSeconds(1f);
+        restart.gameObject.SetActive(true);
     }
     public void SpawnGoal() {
-
+        spawnCounter = spawnRate;
+        currGoal = Instantiate(goal);
+        currGoal.transform.position 
+            = new Vector2(Random.Range(-screenWidth, screenWidth), Random.Range(-screenHeight, screenHeight)) * 0.9f;
     }
     private void Update()
     {
-        spawnCounter -= Time.deltaTime;
-        if (spawnCounter < 0)
+        if (!gameEnded)
         {
-            OnPlayerMissedGoal();
-        }
-        if (spawnCounter >= 5)
-        {
-            countDown.text = "Get the Ring!";
-        }
-        else
-        {
-            countDown.text = "Time: "+(int)(spawnCounter+1);
+            spawnCounter -= Time.deltaTime;
+            if (spawnCounter < 0)
+            {
+                OnPlayerMissedGoal();
+            }
+            if (spawnCounter >= 5)
+            {
+                countDown.text = "Get the Ring!";
+            }
+            else
+            {
+                countDown.text = "Time: " + (int)(spawnCounter + 1);
+            }
         }
         
     }

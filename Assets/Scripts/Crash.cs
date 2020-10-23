@@ -5,12 +5,22 @@ using UnityEngine;
 public class Crash : MonoBehaviour
 {
     public GameObject vfx;
+    private void Start()
+    {
+        GameManager.instance.ships.Add(this);
+    }
     public void OnCrash()
     {
         ParticleSystem particle = GetComponentInChildren<ParticleSystem>();
         if (particle != null)
         {
             particle.transform.SetParent(null, true);
+        }
+
+        GameManager.instance.ships.Remove(this);
+        if (gameObject.tag == "Player")
+        {
+            GameManager.instance.OnGameEnd();
         }
         Destroy(gameObject);
     }

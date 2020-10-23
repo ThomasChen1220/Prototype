@@ -8,7 +8,8 @@ public class Goal : MonoBehaviour
     {
         if (collision.gameObject.tag == "Player")
         {
-
+            GameManager.instance.OnPlayerTouchGoal();
+            Destroy(gameObject);
         }
     }
 }
