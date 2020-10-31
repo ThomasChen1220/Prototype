@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class InputPlayer : InputController
 {
-    public float spawnIntervel = 2f;
     public GameObject clone;
     public static List<Vector2> inputHistory;
 
@@ -21,7 +20,7 @@ public class InputPlayer : InputController
     // Update is called once per frame
     void Update()
     {
-        if (lastSpawn + spawnIntervel < Time.time)
+        if (lastSpawn + GameManager.instance.spawnIntervel < Time.time)
         {
             GameObject c = Instantiate(clone, startPos, Quaternion.identity);
             lastSpawn = Time.time;

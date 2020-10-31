@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI lifeText;
     public Button restart;
     public Volume postprocessing;
+    public float spawnIntervel = 2f;
+
     private ColorAdjustments colorAdj;
 
     public static GameManager instance;
@@ -63,6 +65,7 @@ public class GameManager : MonoBehaviour
         currPlayer = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
         trail = currPlayer.GetComponentInChildren<ParticleSystem>();
 
+        SoundManager.instance.resetPickUp();
         SpawnGoal();
     }
     public void RestartGame() {

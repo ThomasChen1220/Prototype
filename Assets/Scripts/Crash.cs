@@ -15,6 +15,7 @@ public class Crash : MonoBehaviour
         if (particle != null)
         {
             particle.transform.SetParent(null, true);
+            particle.transform.localScale = new Vector3(1, 1, 1);
         }
 
         GameManager.instance.ships.Remove(this);
@@ -22,16 +23,18 @@ public class Crash : MonoBehaviour
         {
             GameManager.instance.OnGameEnd();
         }
+        SoundManager.instance.crashedSound();
         Destroy(gameObject);
     }
     private void OnDestroy()
     {
         var g = Instantiate(vfx, transform.position, Quaternion.identity);
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+    
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         var c = collision.gameObject.GetComponent<Crash>();
-        if ( c != null)
+        if (c != null)
         {
             c.OnCrash();
             OnCrash();
