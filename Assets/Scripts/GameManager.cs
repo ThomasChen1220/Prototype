@@ -11,11 +11,9 @@ public class GameManager : MonoBehaviour
 {
     public float spawnRate;
     public GameObject goal;
-    public TextMeshProUGUI countDown;
     public GameObject currPlayer;
     public GameObject playerPrefab;
     public TextMeshProUGUI scoreText;
-    public TextMeshProUGUI lifeText;
     public Button restart;
     public Volume postprocessing;
     public float spawnIntervel = 2f;
@@ -60,8 +58,7 @@ public class GameManager : MonoBehaviour
         gameEnded = false;
         score = 0;
         playerLife = 3;
-        scoreText.text = "Score: " + score;
-        lifeText.text = "life: " + playerLife;
+        scoreText.text = "" + score;
         currPlayer = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
         trail = currPlayer.GetComponentInChildren<ParticleSystem>();
 
@@ -77,15 +74,15 @@ public class GameManager : MonoBehaviour
     }
     public void OnPlayerTouchGoal() {
         score++;
-        scoreText.text = "Score: " + score;
+        scoreText.text = "" + score;
         SpawnGoal();
     }
     public void OnPlayerMissedGoal() {
-        playerLife--;
+        //playerLife--;
         DOTween.Sequence()
             .Append(DOTween.To(() => colorAdj.colorFilter.value, x => colorAdj.colorFilter.value = x, Color.red, 0.4f))
             .Append(DOTween.To(() => colorAdj.colorFilter.value, x => colorAdj.colorFilter.value = x, Color.white, 0.8f));
-        lifeText.text = "life: " + playerLife;
+        //lifeText.text = "life: " + playerLife;
         if (playerLife <= 0)
         {
             OnPlayerNoHealth();
@@ -98,7 +95,7 @@ public class GameManager : MonoBehaviour
         currPlayer.GetComponent<Crash>().OnCrash();
     }
     public void OnGameEnd() {
-        countDown.text = "Wasted";
+        scoreText.text = "Wasted";
         spawnCounter = 1000;
         gameEnded = true;
         StartCoroutine(DoEndEffect());
@@ -131,11 +128,11 @@ public class GameManager : MonoBehaviour
             }
             if (spawnCounter >= 5)
             {
-                countDown.text = "Get the Ring!";
+                //countDown.text = "Get the Ring!";
             }
             else
             {
-                countDown.text = "Time: " + (int)(spawnCounter + 1);
+                //countDown.text = "Time: " + (int)(spawnCounter + 1);
             }
         }
         

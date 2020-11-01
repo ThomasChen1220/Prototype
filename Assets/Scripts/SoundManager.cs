@@ -1,28 +1,43 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager instance;
-
-    public AudioSource audiosource;
+    
     public AudioClip ringObtained1;
     public AudioClip ringObtained2;
     public AudioClip ringObtained3;
     public AudioClip explosion;
+
+    [Header("Mixer Groups")]
+    public AudioMixerGroup musicGroup;  //The music mixer group
+    public AudioMixerGroup playerGroup; //The player mixer group
+    public AudioMixerGroup explosionGroup;  //The voice mixer group
+    
+    AudioSource musicSource;            //Reference to the generated music Audio Source
+    AudioSource playerSource;           //Reference to the generated player Audio Source
+    AudioSource explosionSource;            //Reference to the generated voice Audio Source
 
     int count = 0;
 
     // Start is called before the first frame update
     void Start()
     {
-        audiosource = GetComponent<AudioSource>();
-
         if (instance != null)
             Destroy(gameObject);
         instance = this;
         DontDestroyOnLoad(gameObject);
+
+        playerSource = gameObject.AddComponent<AudioSource>() as AudioSource;
+        musicSource = gameObject.GetComponent<AudioSource>();
+        explosionSource = gameObject.AddComponent<AudioSource>() as AudioSource;
+
+        playerSource.outputAudioMixerGroup = playerGroup;
+        musicSource.outputAudioMixerGroup = musicGroup;
+        explosionSource.outputAudioMixerGroup = explosionGroup;
     }
 
     // Update is called once per frame
@@ -40,17 +55,17 @@ public class SoundManager : MonoBehaviour
 
         if (count == 0)
         {
-            audiosource.PlayOneShot(ringObtained1, .60f);
+            playerSource.PlayOneShot(ringObtained1, .60f);
             count++;
         }
         else if (count == 1)
         {
-            audiosource.PlayOneShot(ringObtained2, .60f);
+            playerSource.PlayOneShot(ringObtained2, .60f);
             count++;
         }
         else if (count == 2)
         {
-            audiosource.PlayOneShot(ringObtained3, .60f);
+            playerSource.PlayOneShot(ringObtained3, .60f);
             count = 0;
         }
 
@@ -58,7 +73,7 @@ public class SoundManager : MonoBehaviour
 
     public void crashedSound()
     {
-        audiosource.PlayOneShot(explosion, .8f);
+        explosionSource.PlayOneShot(explosion, .8f);
     }
 
 }
