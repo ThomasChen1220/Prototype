@@ -63,6 +63,7 @@ public class GameManager : MonoBehaviour
         trail = currPlayer.GetComponentInChildren<ParticleSystem>();
 
         SoundManager.instance.resetPickUp();
+        Cursor.visible = false;
         SpawnGoal();
     }
     public void RestartGame() {
@@ -110,6 +111,7 @@ public class GameManager : MonoBehaviour
         }
         yield return new WaitForSeconds(1f);
         restart.gameObject.SetActive(true);
+        Cursor.visible = true;
     }
     public void SpawnGoal() {
         spawnCounter = spawnRate;
