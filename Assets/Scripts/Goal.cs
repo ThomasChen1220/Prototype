@@ -9,8 +9,11 @@ public class Goal : MonoBehaviour
         if (collision.gameObject.tag == "Player")
         {
             GameManager.instance.OnPlayerTouchGoal();
-            SoundManager.instance.pickedUpSphereSound();
+            SoundManager.instance.PlayPickedUpSphereSound();
             Destroy(gameObject);
         }
+    }
+    public void Blink() {
+        GetComponent<Animator>().SetBool("Blink", true);
     }
 }

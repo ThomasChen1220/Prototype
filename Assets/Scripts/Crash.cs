@@ -23,7 +23,7 @@ public class Crash : MonoBehaviour
         {
             GameManager.instance.OnGameEnd();
         }
-        SoundManager.instance.crashedSound();
+        SoundManager.instance.PlayCrashedSound();
         Destroy(gameObject);
     }
     private void OnDestroy()

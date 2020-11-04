@@ -14,9 +14,11 @@ public class GameManager : MonoBehaviour
     public GameObject currPlayer;
     public GameObject playerPrefab;
     public TextMeshProUGUI scoreText;
-    public Button restart;
+    public GameObject restart;
     public Volume postprocessing;
     public float spawnIntervel = 2f;
+    public GameObject popUpText;
+    public GameStats gameStatsSave;
 
     private ColorAdjustments colorAdj;
 
@@ -55,22 +57,39 @@ public class GameManager : MonoBehaviour
     }
     public void InitGame()
     {
+        SoundManager.instance.PlayGameBGM();
         gameEnded = false;
         score = 0;
         playerLife = 3;
         scoreText.text = "" + score;
         currPlayer = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
         trail = currPlayer.GetComponentInChildren<ParticleSystem>();
+        popUpText.GetComponent<StickTo>().target = currPlayer.transform;
 
         SoundManager.instance.resetPickUp();
         Cursor.visible = false;
         SpawnGoal();
     }
-    public void RestartGame() {
-        //clean up the scene
+    public void OnPlaceTrap()
+    {
+        popUpText.SetActive(false);
+        gameStatsSave.tutorialShown = true;
+    }
+    public void OnTrapReady() {
+        currPlayer.GetComponent<PlaceTraps>().TurnOnTrail();
+        if (gameStatsSave.tutorialShown == false)
+        {
+            popUpText.SetActive(true);
+        }
+    }
+    public void CleanUpScene()
+    {
         Destroy(currGoal);
         Destroy(trail.gameObject);
-        
+    }
+    public void RestartGame() {
+        //clean up the scene
+        CleanUpScene();
         InitGame();
     }
     public void OnPlayerTouchGoal() {
@@ -80,15 +99,17 @@ public class GameManager : MonoBehaviour
     }
     public void OnPlayerMissedGoal() {
         //playerLife--;
-        DOTween.Sequence()
-            .Append(DOTween.To(() => colorAdj.colorFilter.value, x => colorAdj.colorFilter.value = x, Color.red, 0.4f))
-            .Append(DOTween.To(() => colorAdj.colorFilter.value, x => colorAdj.colorFilter.value = x, Color.white, 0.8f));
+        //DOTween.Sequence()
+        //    .Append(DOTween.To(() => colorAdj.colorFilter.value, x => colorAdj.colorFilter.value = x, Color.red, 0.4f))
+        //    .Append(DOTween.To(() => colorAdj.colorFilter.value, x => colorAdj.colorFilter.value = x, Color.white, 0.8f));
         //lifeText.text = "life: " + playerLife;
+        SoundManager.instance.resetPickUp();
+        SoundManager.instance.PlayMissedSound();
         if (playerLife <= 0)
         {
             OnPlayerNoHealth();
         }
-
+        popUpText.SetActive(false);
         Destroy(currGoal);
         SpawnGoal();
     }
@@ -134,9 +155,13 @@ public class GameManager : MonoBehaviour
             }
             else
             {
+                currGoal.GetComponent<Goal>().Blink();
                 //countDown.text = "Time: " + (int)(spawnCounter + 1);
             }
         }
         
+    }
+    public void QuitGame() {
+        Application.Quit();
     }
 }

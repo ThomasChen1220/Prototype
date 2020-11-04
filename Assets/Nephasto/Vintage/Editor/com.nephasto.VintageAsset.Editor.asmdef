@@ -1,0 +1,12 @@
+﻿{
+  "name": "com.nephasto.VintageAsset.Editor",
+  "references": [ "com.nephasto.VintageAsset" ],
+  "optionalUnityReferences": [],
+  "includePlatforms": [ "Editor" ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": []
+}

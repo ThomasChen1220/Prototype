@@ -1,0 +1,15 @@
+{
+  "name": "com.nephasto.Vintage",
+  "version": "4.6.0",
+  "displayName": "Vintage",
+  "decription": "A big collection of effects that can give to your games a unique and retro look.",
+  "unity": "2018.4",
+  "dependencies":  {  },
+  "keywords": [ "vintage", "instagram", "retro", "computer", "console", "crt" ],
+  "author":
+  {
+    "name": "Martin Bustos",
+    "email": "hello@nephasto.com",
+    "url": "https://www.nephasto.com"
+  }
+}
