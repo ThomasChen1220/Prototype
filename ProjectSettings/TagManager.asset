@@ -51,3 +51,6 @@ TagManager:
   - name: Goal
     uniqueID: 3376651463
     locked: 0
+  - name: Player
+    uniqueID: 409530311
+    locked: 0

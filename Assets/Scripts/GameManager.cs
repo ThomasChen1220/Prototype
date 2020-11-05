@@ -117,7 +117,7 @@ public class GameManager : MonoBehaviour
         currPlayer.GetComponent<Crash>().OnCrash();
     }
     public void OnGameEnd() {
-        scoreText.text = "Wasted";
+        //scoreText.text = "Wasted";
         spawnCounter = 1000;
         gameEnded = true;
         StartCoroutine(DoEndEffect());

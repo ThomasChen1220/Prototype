@@ -5,12 +5,14 @@ using UnityEngine;
 public class Crash : MonoBehaviour
 {
     public GameObject vfx;
+    public bool invinciable = false;
     private void Start()
     {
         GameManager.instance.ships.Add(this);
     }
     public void OnCrash()
     {
+        if (invinciable) return;
         ParticleSystem particle = GetComponentInChildren<ParticleSystem>();
         if (particle != null)
         {
