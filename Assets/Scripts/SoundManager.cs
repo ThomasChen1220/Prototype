@@ -84,7 +84,7 @@ public class SoundManager : MonoBehaviour
     }
     public bool CheckMaxed()
     {
-        return count == (ringObtained.Length);
+        return count >= (ringObtained.Length);
     }
     public void resetPickUp()
     {
@@ -98,11 +98,6 @@ public class SoundManager : MonoBehaviour
         //audiosource.PlayOneShot(ringObtained1, .60f);
         playerSource.PlayOneShot(ringObtained[count], .60f);
         count++;
-
-        if (CheckMaxed())
-        {
-            GameManager.instance.OnTrapReady();
-        }
     }
 
     public void PlayCrashedSound()

@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
+
+public enum PowerUps { None, Traps, Electric, Laser, Sheild }
 public class PlaceTraps : MonoBehaviour
 {
+    
+    public PowerUps currentPowerUp;
     public float trapLength = 2f;
     public ParticleSystem trap;
     public ParticleSystem trail;
@@ -27,7 +31,7 @@ public class PlaceTraps : MonoBehaviour
         return trapLength / GetComponent<Movement>().speed;
     }
     private IEnumerator PlaceTrap() {
-        SoundManager.instance.resetPickUp();
+        ///SoundManager.instance.resetPickUp();
         SoundManager.instance.PlayTrapSound();
         GameManager.instance.OnPlaceTrap();
         placing = true;
@@ -41,7 +45,7 @@ public class PlaceTraps : MonoBehaviour
     }
     void PlaceEMP()
     {
-        SoundManager.instance.resetPickUp();
+       // SoundManager.instance.resetPickUp();
         GameManager.instance.OnPlaceTrap();
         GameObject e = Instantiate(EMP, transform.position, Quaternion.identity);
         e.GetComponent<StickTo>().target = transform;
@@ -49,13 +53,16 @@ public class PlaceTraps : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if ((Input.GetKeyDown(KeyCode.Q) || Input.GetMouseButtonDown(0)) && !placing && SoundManager.instance.CheckMaxed())
+        if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && !placing && SoundManager.instance.CheckMaxed())
         {
-            StartCoroutine(PlaceTrap());
-        }
-        if ((Input.GetKeyDown(KeyCode.E) || Input.GetMouseButtonDown(1)) && !placing && SoundManager.instance.CheckMaxed())
-        {
-            PlaceEMP();
+            if (currentPowerUp == PowerUps.Traps)
+            {
+                StartCoroutine(PlaceTrap());
+            }
+            if(currentPowerUp == PowerUps.Electric)
+            {
+                PlaceEMP();
+            }
         }
     }
 

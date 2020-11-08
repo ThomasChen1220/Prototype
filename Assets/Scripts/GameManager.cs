@@ -9,8 +9,12 @@ using DG.Tweening;
 
 public class GameManager : MonoBehaviour
 {
-    public float spawnRate;
-    public GameObject goal;
+    [SerializeField]
+    private float spawnRate;
+    [SerializeField]
+    private GameObject goal;
+    [SerializeField]
+    private GameObject[] powerUps;
     public GameObject currPlayer;
     public GameObject playerPrefab;
     public TextMeshProUGUI scoreText;
@@ -79,13 +83,14 @@ public class GameManager : MonoBehaviour
         popUpText.SetActive(false);
         gameStatsSave.tutorialShown = true;
     }
-    public void OnTrapReady() {
-        currPlayer.GetComponent<PlaceTraps>().TurnOnTrail();
-        if (gameStatsSave.tutorialShown == false)
-        {
-            popUpText.SetActive(true);
-        }
-    }
+    //TODO: move this part to player
+    //public void OnTrapReady() {
+    //    currPlayer.GetComponent<PlaceTraps>().TurnOnTrail();
+    //    if (gameStatsSave.tutorialShown == false)
+    //    {
+    //        popUpText.SetActive(true);
+    //    }
+    //}
     public void CleanUpScene()
     {
         for(int i = currGoals.Count-1; i >= 0; i--)
@@ -106,7 +111,15 @@ public class GameManager : MonoBehaviour
         scoreText.text = "" + score;
         currGoals.Remove(g);
         Destroy(g.gameObject);
-        SpawnGoal();
+        SoundManager.instance.PlayPickedUpSphereSound();
+        if (SoundManager.instance.CheckMaxed())
+        {
+            SpawnPowerUp();
+        }
+        else
+        {
+            SpawnGoal();
+        }
     }
     public void OnPlayerMissedGoal(GameObject g) {
         SoundManager.instance.PlayMissedSound();
@@ -114,6 +127,14 @@ public class GameManager : MonoBehaviour
         Destroy(g.gameObject);
         popUpText.SetActive(false);
         SpawnGoal();
+    }
+    public void SpawnPowerUp() {
+        Debug.Log("Should place powerup");
+        GameObject powerUp = Instantiate(powerUps[Random.Range(0, powerUps.Length)]);
+        powerUp.transform.position
+            = new Vector2(Random.Range(-screenWidth, screenWidth), Random.Range(-screenHeight, screenHeight)) * 0.8f;
+        currGoals.Add(powerUp);
+        SoundManager.instance.resetPickUp();
     }
     public void SpawnGoal()
     {

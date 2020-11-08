@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class Goal : MonoBehaviour
 {
-    public float spawnCounter = 16;
+    public PowerUps mType = PowerUps.None;
+    public float spawnCounter = 10;
+    private void DoEffect()
+    {
+        GameManager.instance.OnPlayerTouchGoal(gameObject);
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")
         {
-            GameManager.instance.OnPlayerTouchGoal(gameObject);
-            SoundManager.instance.PlayPickedUpSphereSound();
+            DoEffect();
         }
     }
     public void Blink() {
