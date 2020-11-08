@@ -7,7 +7,7 @@ public class PlaceTraps : MonoBehaviour
     public float trapLength = 2f;
     public ParticleSystem trap;
     public ParticleSystem trail;
-    public ParticleSystem EMP;
+    public GameObject EMP;
     public Light2D readyLight;
 
     bool placing = false;
@@ -43,9 +43,8 @@ public class PlaceTraps : MonoBehaviour
     {
         SoundManager.instance.resetPickUp();
         GameManager.instance.OnPlaceTrap();
-        GameObject e = Instantiate(EMP, transform.position, Quaternion.identity).gameObject;
-        e.transform.parent = transform;
-        e.transform.localScale = new Vector3(1, 1, 1);
+        GameObject e = Instantiate(EMP, transform.position, Quaternion.identity);
+        e.GetComponent<StickTo>().target = transform;
     }
     // Update is called once per frame
     void Update()

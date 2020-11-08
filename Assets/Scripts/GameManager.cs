@@ -32,7 +32,10 @@ public class GameManager : MonoBehaviour
     private bool gameEnded = true;
     private ParticleSystem trail;
 
-    public List<Crash> ships;
+    [SerializeField]
+    private int goalNum = 1;
+    [SerializeField]
+    private List<Crash> ships;
     private void Awake()
     {
         ships = new List<Crash>();
@@ -85,11 +88,11 @@ public class GameManager : MonoBehaviour
     }
     public void CleanUpScene()
     {
-        for(int i = 0; i < currGoals.Count; i++)
+        for(int i = currGoals.Count-1; i >= 0; i--)
         {
             var g = currGoals[i].gameObject;
-            if(g)
-                Destroy(g);
+            currGoals.RemoveAt(i);
+            Destroy(g);
         }
         Destroy(trail.gameObject);
     }
@@ -114,19 +117,37 @@ public class GameManager : MonoBehaviour
     }
     public void SpawnGoal()
     {
+        if (currGoals.Count >= goalNum)
+        {
+            return;
+        }
         GameObject currGoal = Instantiate(goal);
         currGoal.transform.position
             = new Vector2(Random.Range(-screenWidth, screenWidth), Random.Range(-screenHeight, screenHeight)) * 0.8f;
         currGoals.Add(currGoal);
     }
-    public void OnPlayerNoHealth() {
-        currPlayer.GetComponent<Crash>().OnCrash();
-    }
     public void OnGameEnd() {
         //scoreText.text = "Wasted";
         spawnCounter = 1000;
         gameEnded = true;
+        popUpText.SetActive(false);
         StartCoroutine(DoEndEffect());
+    }
+    public void AddShip(Crash c)
+    {
+        ships.Add(c);
+        goalNum = ships.Count / 5 + 1;
+        goalNum = Mathf.Min(3, goalNum);
+        if (goalNum > currGoals.Count)
+        {
+            SpawnGoal();
+        }
+    }
+    public void RemoveShip(Crash c)
+    {
+        ships.Remove(c);
+        goalNum = ships.Count / 5 + 1;
+        goalNum = Mathf.Min(3, goalNum);
     }
     private IEnumerator DoEndEffect() {
         //do the death effects

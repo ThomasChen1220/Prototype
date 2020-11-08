@@ -14531,7 +14531,7 @@ MonoBehaviour:
   trapLength: 3
   trap: {fileID: 1109486913}
   trail: {fileID: 329084749}
-  EMP: {fileID: 5389517970715186419, guid: 979f40ca62098c14c8040cf7ecc091a9, type: 3}
+  EMP: {fileID: 7425944175784119499, guid: 979f40ca62098c14c8040cf7ecc091a9, type: 3}
   readyLight: {fileID: 3974697398845414758}
 --- !u!61 &6306922014903366901
 BoxCollider2D:

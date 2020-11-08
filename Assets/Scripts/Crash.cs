@@ -8,7 +8,8 @@ public class Crash : MonoBehaviour
     public bool invinciable = false;
     private void Start()
     {
-        GameManager.instance.ships.Add(this);
+        if(gameObject.tag!="Player")
+            GameManager.instance.AddShip(this);
     }
     public void OnCrash()
     {
@@ -20,7 +21,7 @@ public class Crash : MonoBehaviour
             particle.transform.localScale = new Vector3(1, 1, 1);
         }
 
-        GameManager.instance.ships.Remove(this);
+        GameManager.instance.RemoveShip(this);
         if (gameObject.tag == "Player")
         {
             GameManager.instance.OnGameEnd();
