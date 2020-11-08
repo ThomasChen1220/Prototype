@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
 
     private float spawnCounter;
     private int score = 0;
-    private GameObject currGoal;
+    public List<GameObject> currGoals;
     private int playerLife = 3;
     private bool gameEnded = true;
     private ParticleSystem trail;
@@ -53,7 +53,8 @@ public class GameManager : MonoBehaviour
 
         screenWidth = (screenTopRight.x - screenBottomLeft.x) / 2;
         screenHeight = (screenTopRight.y - screenBottomLeft.y) / 2;
-        
+
+        currGoals = new List<GameObject>();
     }
     public void InitGame()
     {
@@ -84,7 +85,12 @@ public class GameManager : MonoBehaviour
     }
     public void CleanUpScene()
     {
-        Destroy(currGoal);
+        for(int i = 0; i < currGoals.Count; i++)
+        {
+            var g = currGoals[i].gameObject;
+            if(g)
+                Destroy(g);
+        }
         Destroy(trail.gameObject);
     }
     public void RestartGame() {
@@ -92,26 +98,26 @@ public class GameManager : MonoBehaviour
         CleanUpScene();
         InitGame();
     }
-    public void OnPlayerTouchGoal() {
+    public void OnPlayerTouchGoal(GameObject g) {
         score++;
         scoreText.text = "" + score;
+        currGoals.Remove(g);
+        Destroy(g.gameObject);
         SpawnGoal();
     }
-    public void OnPlayerMissedGoal() {
-        //playerLife--;
-        //DOTween.Sequence()
-        //    .Append(DOTween.To(() => colorAdj.colorFilter.value, x => colorAdj.colorFilter.value = x, Color.red, 0.4f))
-        //    .Append(DOTween.To(() => colorAdj.colorFilter.value, x => colorAdj.colorFilter.value = x, Color.white, 0.8f));
-        //lifeText.text = "life: " + playerLife;
-        SoundManager.instance.resetPickUp();
+    public void OnPlayerMissedGoal(GameObject g) {
         SoundManager.instance.PlayMissedSound();
-        if (playerLife <= 0)
-        {
-            OnPlayerNoHealth();
-        }
+        currGoals.Remove(g);
+        Destroy(g.gameObject);
         popUpText.SetActive(false);
-        Destroy(currGoal);
         SpawnGoal();
+    }
+    public void SpawnGoal()
+    {
+        GameObject currGoal = Instantiate(goal);
+        currGoal.transform.position
+            = new Vector2(Random.Range(-screenWidth, screenWidth), Random.Range(-screenHeight, screenHeight)) * 0.8f;
+        currGoals.Add(currGoal);
     }
     public void OnPlayerNoHealth() {
         currPlayer.GetComponent<Crash>().OnCrash();
@@ -134,32 +140,13 @@ public class GameManager : MonoBehaviour
         restart.gameObject.SetActive(true);
         Cursor.visible = true;
     }
-    public void SpawnGoal() {
-        spawnCounter = spawnRate;
-        currGoal = Instantiate(goal);
-        currGoal.transform.position 
-            = new Vector2(Random.Range(-screenWidth, screenWidth), Random.Range(-screenHeight, screenHeight)) * 0.9f;
-    }
-    private void Update()
+    
+    void Update()
     {
-        if (!gameEnded)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            spawnCounter -= Time.deltaTime;
-            if (spawnCounter < 0)
-            {
-                OnPlayerMissedGoal();
-            }
-            if (spawnCounter >= 5)
-            {
-                //countDown.text = "Get the Ring!";
-            }
-            else
-            {
-                currGoal.GetComponent<Goal>().Blink();
-                //countDown.text = "Time: " + (int)(spawnCounter + 1);
-            }
-        }
-        
+            SpawnGoal();
+        }    
     }
     public void QuitGame() {
         Application.Quit();

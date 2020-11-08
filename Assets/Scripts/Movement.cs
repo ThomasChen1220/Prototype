@@ -11,24 +11,44 @@ public class Movement : MonoBehaviour
     private Rigidbody2D rb;
     private Animator anim;
     private InputController mInput;
-   
+    private bool stopped = false;
+
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         mInput = GetComponent<InputController>();
     }
+
+    public void Stop(float time)
+    {
+        StartCoroutine(stop(time));
+    }
+    IEnumerator stop(float time)
+    {
+        stopped = true;
+        yield return new WaitForSeconds(time);
+        stopped = false;
+    }
     
     void FixedUpdate()
     {
-        Vector2 playerInput = mInput.GetInput();
-        if (playerInput.magnitude == 0)
+        if (stopped)
         {
-            playerInput = transform.up;
+            rb.velocity = Vector3.zero;
+            return;
         }
+        else
+        {
+            Vector2 playerInput = mInput.GetInput();
+            if (playerInput.magnitude == 0)
+            {
+                playerInput = transform.up;
+            }
 
-        transform.up = Vector3.RotateTowards(transform.up, playerInput, rotationSpeed*Time.deltaTime, 0.0f);
-        rb.velocity = transform.up * speed;
+            transform.up = Vector3.RotateTowards(transform.up, playerInput, rotationSpeed * Time.deltaTime, 0.0f);
+            rb.velocity = transform.up * speed;
+        }
     }
 
     
