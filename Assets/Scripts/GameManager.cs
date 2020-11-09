@@ -23,7 +23,9 @@ public class GameManager : MonoBehaviour
     public float spawnIntervel = 2f;
     public GameObject popUpText;
     public GameStats gameStatsSave;
+    public int missSpawnRate=4;
 
+    private int missed = 0;
     private ColorAdjustments colorAdj;
 
     public static GameManager instance;
@@ -32,9 +34,8 @@ public class GameManager : MonoBehaviour
     private float spawnCounter;
     private int score = 0;
     public List<GameObject> currGoals;
-    private int playerLife = 3;
     private bool gameEnded = true;
-    private ParticleSystem trail;
+    private ParticleSystem[] trail;
 
     [SerializeField]
     private int goalNum = 1;
@@ -68,10 +69,10 @@ public class GameManager : MonoBehaviour
         SoundManager.instance.PlayGameBGM();
         gameEnded = false;
         score = 0;
-        playerLife = 3;
+        missed = 0;
         scoreText.text = "" + score;
         currPlayer = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
-        trail = currPlayer.GetComponentInChildren<ParticleSystem>();
+        trail = currPlayer.GetComponentsInChildren<ParticleSystem>();
         popUpText.GetComponent<StickTo>().target = currPlayer.transform;
 
         SoundManager.instance.resetPickUp();
@@ -83,14 +84,6 @@ public class GameManager : MonoBehaviour
         popUpText.SetActive(false);
         gameStatsSave.tutorialShown = true;
     }
-    //TODO: move this part to player
-    //public void OnTrapReady() {
-    //    currPlayer.GetComponent<PlaceTraps>().TurnOnTrail();
-    //    if (gameStatsSave.tutorialShown == false)
-    //    {
-    //        popUpText.SetActive(true);
-    //    }
-    //}
     public void CleanUpScene()
     {
         for(int i = currGoals.Count-1; i >= 0; i--)
@@ -99,19 +92,25 @@ public class GameManager : MonoBehaviour
             currGoals.RemoveAt(i);
             Destroy(g);
         }
-        Destroy(trail.gameObject);
+        for(int i = 0; i < trail.Length; i++)
+        {
+            if (trail[i])
+            {
+                Destroy(trail[i].gameObject);
+            }
+        }
     }
     public void RestartGame() {
         //clean up the scene
         CleanUpScene();
         InitGame();
     }
-    public void OnPlayerTouchGoal(GameObject g) {
+    public void OnPlayerTouchGoal(Goal touchedGoal) {
+        GameObject g = touchedGoal.gameObject;
         score++;
         scoreText.text = "" + score;
         currGoals.Remove(g);
         Destroy(g.gameObject);
-        SoundManager.instance.PlayPickedUpSphereSound();
         if (SoundManager.instance.CheckMaxed())
         {
             SpawnPowerUp();
@@ -123,16 +122,25 @@ public class GameManager : MonoBehaviour
     }
     public void OnPlayerMissedGoal(GameObject g) {
         SoundManager.instance.PlayMissedSound();
+        missed++;
         currGoals.Remove(g);
         Destroy(g.gameObject);
         popUpText.SetActive(false);
-        SpawnGoal();
+        if (missed >= missSpawnRate && ships.Count>=7)
+        {
+            SpawnPowerUp();
+            missed = 0;
+        }
+        else
+        {
+            SpawnGoal();
+        }
     }
     public void SpawnPowerUp() {
-        Debug.Log("Should place powerup");
+        //Debug.Log("Should place powerup");
         GameObject powerUp = Instantiate(powerUps[Random.Range(0, powerUps.Length)]);
         powerUp.transform.position
-            = new Vector2(Random.Range(-screenWidth, screenWidth), Random.Range(-screenHeight, screenHeight)) * 0.8f;
+            = new Vector2(Random.Range(-screenWidth, screenWidth), Random.Range(-screenHeight, screenHeight)) * 0.9f;
         currGoals.Add(powerUp);
         SoundManager.instance.resetPickUp();
     }
@@ -144,7 +152,7 @@ public class GameManager : MonoBehaviour
         }
         GameObject currGoal = Instantiate(goal);
         currGoal.transform.position
-            = new Vector2(Random.Range(-screenWidth, screenWidth), Random.Range(-screenHeight, screenHeight)) * 0.8f;
+            = new Vector2(Random.Range(-screenWidth, screenWidth), Random.Range(-screenHeight, screenHeight)) * 0.9f;
         currGoals.Add(currGoal);
     }
     public void OnGameEnd() {
@@ -187,7 +195,7 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            SpawnGoal();
+            SpawnPowerUp();
         }    
     }
     public void QuitGame() {

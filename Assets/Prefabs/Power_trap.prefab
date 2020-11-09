@@ -97,7 +97,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mType: 1
-  spawnCounter: 16
+  spawnCounter: 10
 --- !u!95 &3599469016623939496
 Animator:
   serializedVersion: 3

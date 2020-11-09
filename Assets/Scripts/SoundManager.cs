@@ -15,6 +15,7 @@ public class SoundManager : MonoBehaviour
     public AudioClip mouseHover;
     public AudioClip menuBGM;
     public AudioClip gameBGM;
+    public AudioClip powerUpSound;
 
     [Header("Mixer Groups")]
     public AudioMixerGroup musicGroup;  //The music mixer group
@@ -89,7 +90,9 @@ public class SoundManager : MonoBehaviour
     public void resetPickUp()
     {
         count = 0;
-        GameManager.instance.currPlayer.GetComponent<PlaceTraps>().TurnOffTrail();
+    }
+    public void PlayPowerUpSound() {
+        playerSource.PlayOneShot(powerUpSound);
     }
     public void PlayPickedUpSphereSound()
     {

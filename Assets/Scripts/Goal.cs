@@ -6,15 +6,23 @@ public class Goal : MonoBehaviour
 {
     public PowerUps mType = PowerUps.None;
     public float spawnCounter = 10;
-    private void DoEffect()
+    private void DoEffect(PlaceTraps pt)
     {
-        GameManager.instance.OnPlayerTouchGoal(gameObject);
+        if (mType != PowerUps.None)
+        {
+            pt.SetPowerUp(mType);
+        }
+        else
+        {
+            SoundManager.instance.PlayPickedUpSphereSound();
+        }
+        GameManager.instance.OnPlayerTouchGoal(this);
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "Player")
         {
-            DoEffect();
+            DoEffect(collision.gameObject.GetComponent<PlaceTraps>());
         }
     }
     public void Blink() {

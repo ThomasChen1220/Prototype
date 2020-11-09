@@ -6,14 +6,27 @@ public class Crash : MonoBehaviour
 {
     public GameObject vfx;
     public bool invinciable = false;
+    public GameObject mSheild;
     private void Start()
     {
         if(gameObject.tag!="Player")
             GameManager.instance.AddShip(this);
     }
+    public void GotSheild(GameObject s) {
+        if (mSheild != null)
+        {
+            Destroy(mSheild);
+        }
+        mSheild = s;
+    }
     public void OnCrash()
     {
         if (invinciable) return;
+        if (mSheild != null)
+        {
+            Destroy(mSheild);
+            return;
+        }
         ParticleSystem particle = GetComponentInChildren<ParticleSystem>();
         if (particle != null)
         {
