@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
     private int goalNum = 1;
     [SerializeField]
     private List<Crash> ships;
+    private int lastPU = -1;
     private void Awake()
     {
         ships = new List<Crash>();
@@ -138,7 +139,14 @@ public class GameManager : MonoBehaviour
     }
     public void SpawnPowerUp() {
         //Debug.Log("Should place powerup");
-        GameObject powerUp = Instantiate(powerUps[Random.Range(0, powerUps.Length)]);
+
+        int index = Random.Range(0, powerUps.Length);
+        while(index== lastPU)
+        {
+            index = Random.Range(0, powerUps.Length);
+        }
+        lastPU = index;
+        GameObject powerUp = Instantiate(powerUps[index]);
         powerUp.transform.position
             = new Vector2(Random.Range(-screenWidth, screenWidth), Random.Range(-screenHeight, screenHeight)) * 0.9f;
         currGoals.Add(powerUp);
