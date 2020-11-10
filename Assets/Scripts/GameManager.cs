@@ -22,6 +22,12 @@ public class GameManager : MonoBehaviour
     public Volume postprocessing;
     public float spawnIntervel = 2f;
     public GameObject popUpText;
+
+    public GameObject popUpText2; //this text displays to collect rings
+    public GameObject popUpText3; //this text displays to collect power ups
+    private bool firstTimePickUp = true;
+    private bool firstTimePowerUp = true;
+
     public GameStats gameStatsSave;
     public int missSpawnRate=4;
 
@@ -34,7 +40,7 @@ public class GameManager : MonoBehaviour
     private float spawnCounter;
     private int score = 0;
     public List<GameObject> currGoals;
-    private bool gameEnded = true;
+    private bool gameEnded = true; 
     private ParticleSystem[] trail;
 
     [SerializeField]
@@ -75,6 +81,9 @@ public class GameManager : MonoBehaviour
         currPlayer = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
         trail = currPlayer.GetComponentsInChildren<ParticleSystem>();
         popUpText.GetComponent<StickTo>().target = currPlayer.transform;
+        // added these
+        popUpText2.GetComponent<StickTo>().target = currPlayer.transform;
+        popUpText3.GetComponent<StickTo>().target = currPlayer.transform; 
 
         SoundManager.instance.resetPickUp();
         Cursor.visible = false;
@@ -140,6 +149,13 @@ public class GameManager : MonoBehaviour
     public void SpawnPowerUp() {
         //Debug.Log("Should place powerup");
 
+        //This displays the text 'Collect Power Ups to Say Alive' once
+        if (firstTimePowerUp == true)
+        {
+            StartCoroutine(CollectPowerUpsText());
+            firstTimePowerUp = false; //now instructions won't be played again
+        }
+
         int index = Random.Range(0, powerUps.Length);
         while(index== lastPU)
         {
@@ -154,6 +170,13 @@ public class GameManager : MonoBehaviour
     }
     public void SpawnGoal()
     {
+        //This displays the text 'Collect Rings to Earn Points' once
+        if (firstTimePickUp == true)
+        {
+            StartCoroutine(CollectRingsText());
+            firstTimePickUp = false; //now instructions won't be played again
+        }
+
         if (currGoals.Count >= goalNum)
         {
             return;
@@ -199,14 +222,29 @@ public class GameManager : MonoBehaviour
         Cursor.visible = true;
     }
     
+    private IEnumerator CollectRingsText()
+    {
+        popUpText2.SetActive(true);
+        yield return new WaitForSeconds(5);
+        popUpText2.SetActive(false);
+    }
+
+    private IEnumerator CollectPowerUpsText()
+    {
+        popUpText3.SetActive(true);
+        yield return new WaitForSeconds(5);
+        popUpText3.SetActive(false);
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            SpawnPowerUp();
+            //SpawnPowerUp();
         }    
     }
     public void QuitGame() {
         Application.Quit();
     }
+
 }

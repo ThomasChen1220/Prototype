@@ -93,6 +93,7 @@ public class SoundManager : MonoBehaviour
     }
     public void PlayPowerUpSound() {
         playerSource.PlayOneShot(powerUpSound);
+        resetPickUp();
     }
     public void PlayPickedUpSphereSound()
     {
@@ -105,6 +106,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlayCrashedSound()
     {
+        resetPickUp();
         explosionSource.PlayOneShot(explosion, .8f);
     }
 

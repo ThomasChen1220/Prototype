@@ -38,7 +38,9 @@ public class PlaceTraps : MonoBehaviour
                 }
                 else
                 {
-                    if (GameManager.instance.gameStatsSave.tutorialShown == false)
+                    //I added "!" in if statement 
+                    //Now everytime player picks up power up they will know how to use it
+                    if (!GameManager.instance.gameStatsSave.tutorialShown == false)
                     {
                         GameManager.instance.popUpText.SetActive(true);
                     }
