@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
     public GameObject popUpText2; //this text displays to collect rings
     public GameObject popUpText3; //this text displays to collect power ups
     private bool firstTimePickUp = true;
-    private bool firstTimePowerUp = true;
+    public bool firstTimePowerUp = true;
 
     public GameStats gameStatsSave;
     public int missSpawnRate=4;

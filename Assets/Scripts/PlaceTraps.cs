@@ -39,9 +39,15 @@ public class PlaceTraps : MonoBehaviour
                 else
                 {
                     //I added "!" in if statement 
-                    //Now everytime player picks up power up they will know how to use it
+                    //Now everytime player picks up power up the text will appear to teach player how to use
                     if (!GameManager.instance.gameStatsSave.tutorialShown == false)
                     {
+                        //in the case the player picks up power up while
+                        //popUpText3 is still active 
+                        if (GameManager.instance.firstTimePowerUp == false)
+                        {
+                            GameManager.instance.popUpText3.SetActive(false);
+                        }
                         GameManager.instance.popUpText.SetActive(true);
                     }
 
