@@ -1,0 +1,7 @@
+screen wrapping is not indicated to the players
+score is going away too quickly
+change the skull icon to be a clear spawn point
+options for control schemes
+3-4 power ups are good 
+
+idea power up: for some time, clones can collide with other clones 
